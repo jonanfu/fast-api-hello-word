@@ -14,6 +14,7 @@ app = FastAPI()
 
 #Models
 
+
 class HairColor(Enum):
     white = "white"
     brown = "bron"
@@ -41,7 +42,7 @@ class Location(BaseModel):
         example="Ecuador"
         )
 
-class Person(BaseModel):
+class PersonBase(BaseModel);
     first_name: str = Field(
         ...,
         min_length=1,
@@ -62,6 +63,9 @@ class Person(BaseModel):
         )
     hair_color: Optional[HairColor] = Field(default=None, example="yellow")
     is_married: Optional[bool] = Field(default=None, example=False)
+
+class Person(PersonBase):
+    
     password: str = Field(...,min_length=8)
 
     # class Config:
@@ -75,27 +79,9 @@ class Person(BaseModel):
     #         }
     #     }
 
-class PersonOut:
-    first_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        example="Jona"
-        )
-    last_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        example="Urresta"
-        )
-    age: int = Field(
-        ...,
-        gt=0,
-        le=115,
-        example=21
-        )
-    hair_color: Optional[HairColor] = Field(default=None, example="yellow")
-    is_married: Optional[bool] = Field(default=None, example=False)
+
+class PersonOut(PersonBase):
+    pass
 
 @app.get("/")
 def home():
