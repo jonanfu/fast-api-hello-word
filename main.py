@@ -9,6 +9,7 @@ from pydantic import Field
 #FastAPI
 from fastapi import FastAPI
 from fastapi import Body, Query, Path
+from fastapi import status
 
 app = FastAPI()
 
@@ -42,7 +43,7 @@ class Location(BaseModel):
         example="Ecuador"
         )
 
-class PersonBase(BaseModel);
+class PersonBase(BaseModel):
     first_name: str = Field(
         ...,
         min_length=1,
@@ -79,24 +80,33 @@ class Person(PersonBase):
     #         }
     #     }
 
-
 class PersonOut(PersonBase):
     pass
 
-@app.get("/")
+@app.get(
+    path="/", 
+    status_code=status.HTTP_200_OK
+    )
 def home():
-    return {"Hola": "mundo"}
+    return {"Hola":"mundo"}
 
 
 #Request and Response Body
 
-@app.post("/person/new", response_mode=PersonOut)
+@app.post(
+    path="/person/new", 
+    response_model=PersonOut,
+    status_code=status.HTTP_201_CREATED
+    )
 def create_person(person: Person = Body(...)):
     return person
 
 #Validaciones: Query Parameters
 
-@app.get("/person/detail")
+@app.get(
+    path="/person/detail",
+    status_code=status.HTTP_200_OK
+    )
 def show_person(
     name: Optional[str] = Query(
         None, 
