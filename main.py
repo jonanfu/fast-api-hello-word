@@ -8,7 +8,7 @@ from pydantic import Field
 
 #FastAPI
 from fastapi import FastAPI
-from fastapi import Body, Query, Path
+from fastapi import Body, Query, Path, Form
 from fastapi import status
 
 app = FastAPI()
@@ -83,6 +83,13 @@ class Person(PersonBase):
 class PersonOut(PersonBase):
     pass
 
+class LoginOut(BaseModel):
+    username: str = Field(
+        ...,
+        max_length=20,
+        example="miguel2021"
+        )
+
 @app.get(
     path="/", 
     status_code=status.HTTP_200_OK
@@ -127,7 +134,10 @@ def show_person(
 
 #Valaciaciones: Path Parameters
 
-@app.get("/person/detail/{person_id}")
+@app.get(
+    path="/person/detail/{person_id}",
+    status_code=status.HTTP_200_OK
+    )
 def show_person(
     person_id: int = Path(
         ...
@@ -142,7 +152,10 @@ def show_person(
 
 #Validaciones: Request body
 
-@app.put("/person/{person_id}")
+@app.put(
+    path="/person/{person_id}",
+    status_code=status.HTTP_202_ACCEPTED
+    )
 def update_person(
     person_id: int = Path(
         ...,
@@ -158,3 +171,14 @@ def update_person(
     #results.update(location.dict())
     #return results
     return person
+
+@app.post(
+    path="/login",
+    response_model=LoginOut,
+    status_code=status.HTTP_200_OK
+)
+def login(
+    username: str = Form(...),
+    password: str = Form(...) 
+    ):
+    return LoginOut(username=username)
